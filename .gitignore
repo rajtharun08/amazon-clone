@@ -1,0 +1,95 @@
+# ==============================
+# React Frontend
+# ==============================
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/.DS_Store
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage
+
+# ==============================
+# Spring Boot / Java Backend
+# ==============================
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.mvn/
+backend/*.iml
+backend/.DS_Store
+backend/*.log
+backend/.factorypath
+
+# Maven / Gradle Wrapper
+**/mvnw
+**/mvnw.cmd
+**/.mvn/wrapper/maven-wrapper.jar
+**/gradlew
+**/gradlew.bat
+**/gradle/wrapper/gradle-wrapper.jar
+
+# ==============================
+# IDE / Editor
+# ==============================
+# VS Code
+.vscode/
+
+# Eclipse / STS
+*.tmp
+*.bak
+*.swp
+*.swo
+.sts/
+*.launch
+.settings/
+.project
+.classpath
+.factorypath
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ==============================
+# Operating System
+# ==============================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.nfs*
+
+# ==============================
+# Logs / Temp
+# ==============================
+*.log
+*.tmp
+*.temp
+*.pid
+*.seed
+*.swp
+
+# ==============================
+# Environment / Configuration
+# ==============================
+*.env
+*.local
