@@ -1,12 +1,13 @@
 package com.amazonclone.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.amazonclone.backend.model.Product;
 import com.amazonclone.backend.repository.ProductRepository;
-
 import java.util.List;
 
 @RestController
@@ -16,6 +17,13 @@ public class ProductController {
 
     private final ProductRepository productRepository;
 
+    // Simple hello endpoint
+    @GetMapping("/hello")
+    public String home() {
+        return "Backend is working!";
+    }
+
+    // Basic CRUD
     @GetMapping
     public List<Product> getAll() {
         return productRepository.findAll();
@@ -42,6 +50,8 @@ public class ProductController {
                     existing.setDescription(product.getDescription());
                     existing.setPrice(product.getPrice());
                     existing.setQuantity(product.getQuantity());
+                    existing.setCategory(product.getCategory());
+                    existing.setImageUrl(product.getImageUrl());
                     Product updated = productRepository.save(existing);
                     return ResponseEntity.ok(updated);
                 })
@@ -56,5 +66,18 @@ public class ProductController {
         }
         return ResponseEntity.notFound().build();
     }
-}
 
+    // Search by name or description
+    @GetMapping("/search")
+    public Page<Product> searchProducts(@RequestParam String keyword, Pageable pageable) {
+        return productRepository
+                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, pageable);
+    }
+
+    // Filter by category
+    @GetMapping("/category")
+    public Page<Product> filterByCategory(@RequestParam String category, Pageable pageable) {
+        return productRepository.findByCategoryIgnoreCase(category, pageable);
+    }
+    
+}
