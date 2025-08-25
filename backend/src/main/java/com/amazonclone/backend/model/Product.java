@@ -31,4 +31,8 @@ public class Product {
     private String category;
 
     private String imageUrl;
+    
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<Review> reviews = new java.util.ArrayList<>();
 }
