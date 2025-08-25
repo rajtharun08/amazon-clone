@@ -10,8 +10,6 @@ import jakarta.validation.Valid;
 import com.amazonclone.backend.model.Product;
 import com.amazonclone.backend.repository.ProductRepository;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
