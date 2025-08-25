@@ -1,5 +1,7 @@
 package com.amazonclone.backend.model;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import java.math.BigDecimal;
 
@@ -13,14 +15,20 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Product name is required")
     private String name;
-    private String description;
-    private BigDecimal price;
-    private int quantity;
-    private String category;
-    private String imageUrl;
-	public boolean isOutOfStock() {
-    return quantity <= 0;
-    }
 
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
+    private String description;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")
+    private BigDecimal price;
+
+    @Min(value = 0, message = "Quantity cannot be negative")
+    private int quantity;
+
+    @NotBlank(message = "Category is required")
+    private String category;
+
+    private String imageUrl;
 }

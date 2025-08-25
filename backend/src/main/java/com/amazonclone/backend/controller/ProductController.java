@@ -6,8 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import com.amazonclone.backend.model.Product;
 import com.amazonclone.backend.repository.ProductRepository;
+
 import java.util.List;
 
 @RestController
@@ -17,16 +19,16 @@ public class ProductController {
 
     private final ProductRepository productRepository;
 
-    // Simple hello endpoint
-    @GetMapping("/hello")
-    public String home() {
+    // Health check
+    @GetMapping("/ping")
+    public String ping() {
         return "Backend is working!";
     }
 
-    // Basic CRUD
+    // Get all with pagination + sorting
     @GetMapping
-    public List<Product> getAll() {
-        return productRepository.findAll();
+    public Page<Product> getAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -37,13 +39,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody Product product) {
+    public ResponseEntity<Product> create(@Valid @RequestBody Product product) {
         Product saved = productRepository.save(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
+    public ResponseEntity<Product> update(@PathVariable Long id, @Valid @RequestBody Product product) {
         return productRepository.findById(id)
                 .map(existing -> {
                     existing.setName(product.getName());
@@ -67,17 +69,15 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
-    // Search by name or description
+    //  Search endpoint
     @GetMapping("/search")
-    public Page<Product> searchProducts(@RequestParam String keyword, Pageable pageable) {
-        return productRepository
-                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, pageable);
+    public Page<Product> search(@RequestParam String keyword, Pageable pageable) {
+        return productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, pageable);
     }
 
-    // Filter by category
+    // Category filter
     @GetMapping("/category")
-    public Page<Product> filterByCategory(@RequestParam String category, Pageable pageable) {
+    public Page<Product> getByCategory(@RequestParam String category, Pageable pageable) {
         return productRepository.findByCategoryIgnoreCase(category, pageable);
     }
-    
 }
