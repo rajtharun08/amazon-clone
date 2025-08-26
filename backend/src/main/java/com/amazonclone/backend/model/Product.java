@@ -31,6 +31,8 @@ public class Product {
     private String category;
 
     private String imageUrl;
+    //Soft delete flag (instead of removing row from DB)
+    private boolean active = true;
     
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

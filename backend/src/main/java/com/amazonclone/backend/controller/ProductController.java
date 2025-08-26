@@ -58,11 +58,8 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (productService.exists(id)) {
-            productService.delete(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        productService.softDelete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")

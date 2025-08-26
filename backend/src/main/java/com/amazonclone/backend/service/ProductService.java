@@ -42,4 +42,11 @@ public class ProductService {
     public Page<Product> getByCategory(String category, Pageable pageable) {
         return productRepository.findByCategoryIgnoreCase(category, pageable);
     }
+    // we set active = false
+    public void softDelete(Long id) {
+        productRepository.findById(id).ifPresent(product -> {
+            product.setActive(false);
+            productRepository.save(product);
+        });
+    }
 }
