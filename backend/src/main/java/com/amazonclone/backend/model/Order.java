@@ -1,19 +1,18 @@
 package com.amazonclone.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Table(name = "orders") // 'order' is reserved in SQL
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -23,8 +22,11 @@ public class Order {
     private LocalDateTime orderDate;
     private BigDecimal totalAmount;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id")
-    private List<CartItem> items;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

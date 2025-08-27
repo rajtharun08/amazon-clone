@@ -1,13 +1,19 @@
 package com.amazonclone.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Product {
 
@@ -31,11 +37,11 @@ public class Product {
     private String category;
 
     private String imageUrl;
-    //Soft delete flag (instead of removing row from DB)
-//    @Builder.Default 
+
     private boolean active = true;
-    
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     @Builder.Default
-    private java.util.List<Review> reviews = new java.util.ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 }

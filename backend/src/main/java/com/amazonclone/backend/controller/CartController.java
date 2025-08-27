@@ -1,6 +1,6 @@
 package com.amazonclone.backend.controller;
 
-import com.amazonclone.backend.model.CartItem;
+import com.amazonclone.backend.dto.CartItemDTO;
 import com.amazonclone.backend.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +16,12 @@ public class CartController {
     private final CartService cartService;
 
     @GetMapping
-    public List<CartItem> getCart() {
-        return cartService.getCart();
+    public ResponseEntity<List<CartItemDTO>> getCart() {
+        return ResponseEntity.ok(cartService.getCart());
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CartItem> addToCart(
+    public ResponseEntity<CartItemDTO> addToCart(
             @RequestParam Long productId,
             @RequestParam int quantity) {
         return ResponseEntity.ok(cartService.addToCart(productId, quantity));

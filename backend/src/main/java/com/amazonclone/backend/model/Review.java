@@ -1,5 +1,6 @@
 package com.amazonclone.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,13 +17,11 @@ public class Review {
     private Long id;
 
     private String reviewerName;
-
     private String comment;
-
-    private int rating; // 1–5
+    private int rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 }
-
