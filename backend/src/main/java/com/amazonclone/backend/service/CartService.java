@@ -3,6 +3,7 @@ package com.amazonclone.backend.service;
 import com.amazonclone.backend.dto.CartItemDTO;
 import com.amazonclone.backend.model.CartItem;
 import com.amazonclone.backend.model.Product;
+import com.amazonclone.backend.model.User;
 import com.amazonclone.backend.repository.CartItemRepository;
 import com.amazonclone.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,18 +21,18 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
-    public List<CartItemDTO> getCart() {
-        return cartItemRepository.findAll().stream()
+    public List<CartItemDTO> getCart(User user) {
+        return cartItemRepository.findByUser(user).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public CartItemDTO addToCart(Long productId, int quantity) {
+    public CartItemDTO addToCart(Long productId, int quantity, User user) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Optional<CartItem> existingItem = cartItemRepository.findByProductId(productId);
+        Optional<CartItem> existingItem = cartItemRepository.findByProductIdAndUser(productId, user);
 
         CartItem cartItem;
         if (existingItem.isPresent()) {
@@ -41,21 +42,23 @@ public class CartService {
             cartItem = new CartItem();
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
+            cartItem.setUser(user);
         }
         return convertToDto(cartItemRepository.save(cartItem));
     }
 
     public void removeFromCart(Long cartItemId) {
+        // Optional: You could add a check here to ensure the item belongs to the user.
         cartItemRepository.deleteById(cartItemId);
     }
 
-    public void clearCart() {
-        cartItemRepository.deleteAll();
+    public void clearCart(User user) {
+        List<CartItem> cartItems = cartItemRepository.findByUser(user);
+        cartItemRepository.deleteAll(cartItems);
     }
-    
-    // This method is for internal use by the OrderService
-    public List<CartItem> getCartEntities() {
-        return cartItemRepository.findAll();
+
+    public List<CartItem> getCartEntities(User user) {
+        return cartItemRepository.findByUser(user);
     }
 
     private CartItemDTO convertToDto(CartItem item) {

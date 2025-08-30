@@ -4,7 +4,11 @@ import com.amazonclone.backend.dto.OrderDTO;
 import com.amazonclone.backend.dto.OrderItemDTO;
 import com.amazonclone.backend.model.*;
 import com.amazonclone.backend.repository.OrderRepository;
+import com.amazonclone.backend.repository.UserRepository;
+
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +22,15 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final CartService cartService;
 
     @Transactional
-    public OrderDTO placeOrder() {
-        List<CartItem> cartItems = cartService.getCartEntities();
+    public OrderDTO placeOrder(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userEmail));
+
+        List<CartItem> cartItems = cartService.getCartEntities(user);
         if (cartItems.isEmpty()) {
             throw new IllegalStateException("Cannot place an order with an empty cart.");
         }
@@ -32,6 +40,7 @@ public class OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Order order = new Order();
+        order.setUser(user); // <-- Link the order to the user
         order.setOrderDate(LocalDateTime.now());
         order.setTotalAmount(totalAmount);
         order.setStatus(OrderStatus.PROCESSING);
@@ -47,13 +56,16 @@ public class OrderService {
 
         order.setOrderItems(orderItems);
         Order savedOrder = orderRepository.save(order);
-        cartService.clearCart();
+        cartService.clearCart(user);
         return convertToDto(savedOrder);
     }
 
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrders() {
-        return orderRepository.findAll().stream()
+    public List<OrderDTO> getOrders(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userEmail));
+        
+        return orderRepository.findByUser(user).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
