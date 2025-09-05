@@ -6,7 +6,7 @@ import ProductListPage from './pages/ProductListPage'; // Changed from HomePage
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import PrivateRoute from './components/PrivateRoute'; // <-- Import PrivateRoute
-import CartPage from './pages/CartPage'; // <-- Create this page next
+import CartPage from './pages/CartPage.jsx'; // <-- Create this page next
 import OrdersPage from './pages/OrdersPage'; // <-- Create this page next
 
 function App() {
